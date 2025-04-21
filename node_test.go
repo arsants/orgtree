@@ -78,3 +78,59 @@ func TestGetDepth(t *testing.T) {
 		}
 	}
 }
+
+func TestTreeJSONSerialization(t *testing.T) {
+	// Создаем тестовое дерево
+	root := NewNode("root")
+	child1 := NewNode("child1")
+	child2 := NewNode("child2")
+	grandchild1 := NewNode("grandchild1")
+	grandchild2 := NewNode("grandchild2")
+
+	root.AddChild(child1)
+	root.AddChild(child2)
+	child1.AddChild(grandchild1)
+	child2.AddChild(grandchild2)
+
+	// Сериализуем дерево
+	jsonData, err := root.ToJSON()
+	if err != nil {
+		t.Fatalf("Failed to serialize tree: %v", err)
+	}
+
+	// Десериализуем обратно
+	newRoot, err := FromJSON(jsonData)
+	if err != nil {
+		t.Fatalf("Failed to deserialize tree: %v", err)
+	}
+
+	// Проверяем, что все узлы на месте с помощью итератора
+	originalNodes := make(map[string]bool)
+	it := NewPreOrderIterator(root)
+	for node := it.Next(); node != nil; node = it.Next() {
+		if str, ok := node.Value.(string); ok {
+			originalNodes[str] = true
+		}
+	}
+
+	newNodes := make(map[string]bool)
+	it = NewPreOrderIterator(newRoot)
+	for node := it.Next(); node != nil; node = it.Next() {
+		if str, ok := node.Value.(string); ok {
+			newNodes[str] = true
+		}
+	}
+
+	// Проверяем, что все узлы сохранились
+	for value := range originalNodes {
+		if !newNodes[value] {
+			t.Errorf("Node '%s' lost after serialization/deserialization", value)
+		}
+	}
+
+	for value := range newNodes {
+		if !originalNodes[value] {
+			t.Errorf("Extra node '%s' appeared after serialization/deserialization", value)
+		}
+	}
+}

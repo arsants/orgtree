@@ -1,52 +1,52 @@
 {
-  "value": "CEO",
   "children": [
     {
-      "value": "CTO",
       "children": [
         {
-          "value": "Senior Developer",
-          "children": []
+          "children": [],
+          "value": "Senior Developer"
         },
         {
-          "value": "Junior Developer",
-          "children": []
+          "children": [],
+          "value": "Junior Developer"
         },
         {
-          "value": "Middle Developer",
-          "children": []
+          "children": [],
+          "value": "Middle Developer"
         }
-      ]
+      ],
+      "value": "CTO"
     },
     {
-      "value": "CFO",
       "children": [
         {
-          "value": "Senior Accountant",
-          "children": []
+          "children": [],
+          "value": "Senior Accountant"
         },
         {
-          "value": "Junior Accountant",
-          "children": []
+          "children": [],
+          "value": "Junior Accountant"
         },
         {
-          "value": "Middle Accountant",
-          "children": []
+          "children": [],
+          "value": "Middle Accountant"
         }
-      ]
+      ],
+      "value": "CFO"
     },
     {
-      "value": "HR Manager",
       "children": [
         {
-          "value": "Senior HR Specialist",
-          "children": []
+          "children": [],
+          "value": "Senior HR Specialist"
         },
         {
-          "value": "Junior HR Specialist",
-          "children": []
+          "children": [],
+          "value": "Junior HR Specialist"
         }
-      ]
+      ],
+      "value": "HR Manager"
     }
-  ]
+  ],
+  "value": "CEO"
 }

@@ -7,8 +7,10 @@ import (
 	"log"
 	"os"
 	"regexp"
+	"strings"
 
 	"github.com/arsants/orgtree"
+	"github.com/google/uuid"
 )
 
 func printJSON(data []byte) {
@@ -131,8 +133,6 @@ func main() {
 	// Демонстрация обхода дерева
 	fmt.Println("\n=== Демонстрация обхода дерева ===")
 
-	// Устанавливаем тип обхода
-
 	// Демонстрация фильтрации по условию
 	fmt.Println("\n=== Демонстрация фильтрации по условию ===")
 	predicate := func(value interface{}) bool {
@@ -165,4 +165,136 @@ func main() {
 	} else {
 		fmt.Printf("Глубина узла Senior Developer: %d\n", depth)
 	}
+
+	// Демонстрация работы с TreeBuilder
+	fmt.Println("\n=== Демонстрация работы с TreeBuilder ===")
+
+	// Создаем построитель дерева
+	builder := orgtree.NewTreeBuilder()
+
+	// Создаем тестовые данные
+	nodeType := &orgtree.NodeType{
+		ID:      uuid.New(),
+		Name:    "Отдел",
+		SysName: "department",
+	}
+
+	node := &orgtree.OrgNode{
+		ID:      uuid.New(),
+		Name:    "Главный офис",
+		SysName: "main_office",
+		TypeID:  nodeType.ID,
+		Type:    nodeType,
+	}
+
+	edge := &orgtree.Edge{
+		ID:       uuid.New(),
+		Name:     "Подчинение",
+		SysName:  "subordination",
+		FromNode: node.ID,
+		ToNode:   uuid.New(), // Для демонстрации
+	}
+
+	position := &orgtree.Position{
+		ID:      uuid.New(),
+		Name:    "Директор",
+		SysName: "director",
+	}
+
+	relation := &orgtree.PositionNodeRelation{
+		ID:         uuid.New(),
+		NodeID:     node.ID,
+		PositionID: position.ID,
+		Position:   position,
+	}
+
+	// Добавляем данные в построитель
+	builder.AddNode(node)
+
+	// Создаем и добавляем дополнительные узлы
+	itDept := &orgtree.OrgNode{
+		ID:      uuid.New(),
+		Name:    "IT отдел",
+		SysName: "it_department",
+		TypeID:  nodeType.ID,
+		Type:    nodeType,
+	}
+	builder.AddNode(itDept)
+
+	hrDept := &orgtree.OrgNode{
+		ID:      uuid.New(),
+		Name:    "Отдел кадров",
+		SysName: "hr_department",
+		TypeID:  nodeType.ID,
+		Type:    nodeType,
+	}
+	builder.AddNode(hrDept)
+
+	// Добавляем связи между узлами
+	builder.AddEdge(edge)
+	builder.AddEdge(&orgtree.Edge{
+		ID:       uuid.New(),
+		Name:     "Подчинение",
+		SysName:  "subordination",
+		FromNode: node.ID,
+		ToNode:   itDept.ID,
+	})
+	builder.AddEdge(&orgtree.Edge{
+		ID:       uuid.New(),
+		Name:     "Подчинение",
+		SysName:  "subordination",
+		FromNode: node.ID,
+		ToNode:   hrDept.ID,
+	})
+
+	// Добавляем должности
+	builder.AddPosition(position)
+	itManager := &orgtree.Position{
+		ID:      uuid.New(),
+		Name:    "IT менеджер",
+		SysName: "it_manager",
+	}
+	builder.AddPosition(itManager)
+	hrManager := &orgtree.Position{
+		ID:      uuid.New(),
+		Name:    "HR менеджер",
+		SysName: "hr_manager",
+	}
+	builder.AddPosition(hrManager)
+
+	// Добавляем связи должностей с узлами
+	builder.AddPositionNodeRelation(relation)
+	builder.AddPositionNodeRelation(&orgtree.PositionNodeRelation{
+		ID:         uuid.New(),
+		NodeID:     itDept.ID,
+		PositionID: itManager.ID,
+		Position:   itManager,
+	})
+	builder.AddPositionNodeRelation(&orgtree.PositionNodeRelation{
+		ID:         uuid.New(),
+		NodeID:     hrDept.ID,
+		PositionID: hrManager.ID,
+		Position:   hrManager,
+	})
+
+	// Построение дерева
+	orgTree := builder.BuildTree()
+
+	// Выводим результат
+	orgTreeJSON, _ := orgTree.ToJSON()
+	fmt.Println("Дерево, построенное с помощью TreeBuilder:")
+	printJSON(orgTreeJSON)
+
+	fmt.Println("\n=== Структура дерева ===")
+	orgTree.PrintTree()
+
+	// Пример использования WalkTree
+	fmt.Println("\n=== Обход дерева с отступами ===")
+	orgTree.WalkTree(func(node *orgtree.Node, depth int) {
+		indent := strings.Repeat("  ", depth)
+		if orgNode, ok := node.Value.(*orgtree.OrgNode); ok {
+			fmt.Printf("%s- %s\n", indent, orgNode.Name)
+		}
+	})
+
 }
