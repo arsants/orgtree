@@ -1,0 +1,18 @@
+{
+  "value": "CEO",
+  "children": [
+    {
+      "value": "CTO",
+      "children": [
+        {
+          "value": "Senior Developer",
+          "children": []
+        },
+        {
+          "value": "Junior Developer",
+          "children": []
+        }
+      ]
+    }
+  ]
+}
