@@ -11,6 +11,40 @@
         {
           "value": "Junior Developer",
           "children": []
+        },
+        {
+          "value": "Middle Developer",
+          "children": []
+        }
+      ]
+    },
+    {
+      "value": "CFO",
+      "children": [
+        {
+          "value": "Senior Accountant",
+          "children": []
+        },
+        {
+          "value": "Junior Accountant",
+          "children": []
+        },
+        {
+          "value": "Middle Accountant",
+          "children": []
+        }
+      ]
+    },
+    {
+      "value": "HR Manager",
+      "children": [
+        {
+          "value": "Senior HR Specialist",
+          "children": []
+        },
+        {
+          "value": "Junior HR Specialist",
+          "children": []
         }
       ]
     }

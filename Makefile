@@ -1,4 +1,4 @@
-.PHONY: build test clean help run
+.PHONY: build test clean help run test-all
 
 # Переменные
 BINARY_NAME=orgtree
@@ -23,9 +23,15 @@ run: build ## Собрать и запустить приложение
 test: ## Запустить тесты
 	go test -v ./...
 
+test-all: ## Запустить все тесты с покрытием
+	go test -v -coverprofile=coverage.out ./...
+	go tool cover -html=coverage.out -o coverage.html
+	@echo "Отчет о покрытии сохранен в coverage.html"
+
 clean: ## Очистить скомпилированные файлы
 	go clean
 	rm -rf $(BIN_DIR)
+	rm -f coverage.out coverage.html
 
 # Дополнительные команды
 fmt: ## Отформатировать код
@@ -38,4 +44,4 @@ lint: ## Запустить линтер
 	golangci-lint run
 
 # Полный цикл
-all: fmt vet test build ## Выполнить полный цикл: форматирование, проверку, тесты и сборку 
+all: fmt vet test-all build ## Выполнить полный цикл: форматирование, проверку, тесты и сборку 
