@@ -1,48 +1,93 @@
 # OrgTree
 
-Проект для работы с организационной структурой.
+OrgTree - это библиотека на Go для работы с организационными структурами в виде деревьев. Она позволяет создавать, манипулировать и сериализовать иерархические структуры данных.
+
+## Особенности
+
+- Создание и манипуляция древовидными структурами
+- Сериализация в JSON и десериализация из JSON
+- Вычисление хеша структуры для отслеживания изменений
+- Простой и понятный API
 
 ## Установка
 
 ```bash
-go get github.com/yourusername/orgtree
+go get github.com/arsants/orgtree
 ```
 
 ## Использование
 
+### Создание дерева
+
 ```go
-package main
+import "github.com/arsants/orgtree"
 
-import (
-    "fmt"
-    "log"
-    "github.com/yourusername/orgtree"
-)
+// Создание корневого узла
+root := orgtree.NewNode("CEO")
 
-func main() {
-    // Создаем новое дерево
-    tree := orgtree.NewTree()
+// Добавление дочерних узлов
+cto := orgtree.NewNode("CTO")
+root.AddChild(cto)
 
-    // Добавляем узлы
-    err := tree.AddNode("1", "CEO", "root")
-    if err != nil {
-        log.Fatal(err)
-    }
+dev1 := orgtree.NewNode("Senior Developer")
+dev2 := orgtree.NewNode("Junior Developer")
+cto.AddChild(dev1)
+cto.AddChild(dev2)
+```
 
-    // Получаем узел по ID
-    node := tree.GetNode("1")
-    if node != nil {
-        fmt.Printf("Найден узел: %s\n", node.Name)
-    }
+### Сериализация в JSON
+
+```go
+// Сериализация в JSON
+jsonData, err := root.ToJSON()
+if err != nil {
+    log.Fatal(err)
+}
+
+// Десериализация из JSON
+tree, err := orgtree.FromJSON(jsonData)
+if err != nil {
+    log.Fatal(err)
 }
 ```
 
-Полный пример использования можно найти в директории `cmd/main.go`.
+### Вычисление хеша
 
-## Запуск примера
+```go
+// Получение хеша в виде байтов
+hash := root.Hash()
+
+// Получение хеша в виде строки
+hashString := root.HashString()
+```
+
+## Структура проекта
+
+```
+orgtree/
+├── cmd/
+│   └── orgtree/
+│       └── main.go       # Пример использования
+├── orgtree.go            # Основной код библиотеки
+├── orgtree_test.go       # Тесты
+├── go.mod                # Go модуль
+├── Makefile              # Команды для сборки и тестирования
+└── README.md             # Документация
+```
+
+## Сборка и тестирование
+
+Проект использует Makefile для автоматизации задач:
 
 ```bash
-go run cmd/main.go
+make build    # Собрать проект
+make run      # Собрать и запустить приложение
+make test     # Запустить тесты
+make clean    # Очистить скомпилированные файлы
+make fmt      # Отформатировать код
+make vet      # Проверить код на потенциальные ошибки
+make lint     # Запустить линтер
+make all      # Выполнить полный цикл: форматирование, проверку, тесты и сборку
 ```
 
 ## Лицензия
