@@ -183,7 +183,6 @@ func main() {
 		ID:      uuid.New(),
 		Name:    "Главный офис",
 		SysName: "main_office",
-		TypeID:  nodeType.ID,
 		Type:    nodeType,
 	}
 
@@ -202,10 +201,9 @@ func main() {
 	}
 
 	relation := &orgtree.PositionNodeRelation{
-		ID:         uuid.New(),
-		NodeID:     node.ID,
-		PositionID: position.ID,
-		Position:   position,
+		ID:       uuid.New(),
+		NodeID:   node.ID,
+		Position: position,
 	}
 
 	// Добавляем данные в построитель
@@ -216,7 +214,6 @@ func main() {
 		ID:      uuid.New(),
 		Name:    "IT отдел",
 		SysName: "it_department",
-		TypeID:  nodeType.ID,
 		Type:    nodeType,
 	}
 	builder.AddNode(itDept)
@@ -253,7 +250,6 @@ func main() {
 			ID:      uuid.New(),
 			Name:    team.name,
 			SysName: team.sysName,
-			TypeID:  nodeType.ID,
 			Type:    nodeType,
 		}
 		builder.AddNode(node)
@@ -266,7 +262,6 @@ func main() {
 					ID:      uuid.New(),
 					Name:    subteam.name,
 					SysName: subteam.sysName,
-					TypeID:  nodeType.ID,
 					Type:    nodeType,
 				}
 				builder.AddNode(subnode)
@@ -286,7 +281,6 @@ func main() {
 		ID:      uuid.New(),
 		Name:    "Отдел кадров",
 		SysName: "hr_department",
-		TypeID:  nodeType.ID,
 		Type:    nodeType,
 	}
 	builder.AddNode(hrDept)
@@ -321,7 +315,6 @@ func main() {
 			ID:      uuid.New(),
 			Name:    team.name,
 			SysName: team.sysName,
-			TypeID:  nodeType.ID,
 			Type:    nodeType,
 		}
 		builder.AddNode(node)
@@ -334,7 +327,6 @@ func main() {
 					ID:      uuid.New(),
 					Name:    subteam.name,
 					SysName: subteam.sysName,
-					TypeID:  nodeType.ID,
 					Type:    nodeType,
 				}
 				builder.AddNode(subnode)
@@ -467,26 +459,23 @@ func main() {
 	// Добавляем связи должностей с узлами
 	builder.AddPositionNodeRelation(relation)
 	builder.AddPositionNodeRelation(&orgtree.PositionNodeRelation{
-		ID:         uuid.New(),
-		NodeID:     itDept.ID,
-		PositionID: itManager.ID,
-		Position:   itManager,
+		ID:       uuid.New(),
+		NodeID:   itDept.ID,
+		Position: itManager,
 	})
 	builder.AddPositionNodeRelation(&orgtree.PositionNodeRelation{
-		ID:         uuid.New(),
-		NodeID:     hrDept.ID,
-		PositionID: hrManager.ID,
-		Position:   hrManager,
+		ID:       uuid.New(),
+		NodeID:   hrDept.ID,
+		Position: hrManager,
 	})
 
 	// Добавляем связи должностей для команд
 	for sysName, teamNode := range itTeamNodes {
 		if pos, ok := positionNodes[sysName+"_lead"]; ok {
 			builder.AddPositionNodeRelation(&orgtree.PositionNodeRelation{
-				ID:         uuid.New(),
-				NodeID:     teamNode.ID,
-				PositionID: pos.ID,
-				Position:   pos,
+				ID:       uuid.New(),
+				NodeID:   teamNode.ID,
+				Position: pos,
 			})
 		}
 	}
@@ -494,10 +483,9 @@ func main() {
 	for sysName, teamNode := range hrTeamNodes {
 		if pos, ok := positionNodes[sysName+"_lead"]; ok {
 			builder.AddPositionNodeRelation(&orgtree.PositionNodeRelation{
-				ID:         uuid.New(),
-				NodeID:     teamNode.ID,
-				PositionID: pos.ID,
-				Position:   pos,
+				ID:       uuid.New(),
+				NodeID:   teamNode.ID,
+				Position: pos,
 			})
 		}
 	}

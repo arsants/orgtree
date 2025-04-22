@@ -14,7 +14,6 @@ type OrgNode struct {
 	ID      uuid.UUID `json:"id"`
 	Name    string    `json:"name"`
 	SysName string    `json:"sysname"`
-	TypeID  uuid.UUID `json:"type_id"`
 	Type    *NodeType `json:"type,omitempty"`
 }
 
@@ -30,7 +29,6 @@ type Edge struct {
 	ID       uuid.UUID `json:"id"`
 	Name     string    `json:"name"`
 	SysName  string    `json:"sysname"`
-	TypeID   uuid.UUID `json:"type_id"`
 	Type     *EdgeType `json:"type,omitempty"`
 	FromNode uuid.UUID `json:"from_node"`
 	ToNode   uuid.UUID `json:"to_node"`
@@ -45,8 +43,7 @@ type Position struct {
 
 // PositionNodeRelation представляет связь между должностью и узлом
 type PositionNodeRelation struct {
-	ID         uuid.UUID `json:"id"`
-	NodeID     uuid.UUID `json:"node_id"`
-	PositionID uuid.UUID `json:"position_id"`
-	Position   *Position `json:"position,omitempty"`
+	ID       uuid.UUID `json:"id"`
+	NodeID   uuid.UUID `json:"node_id"`
+	Position *Position `json:"position,omitempty"`
 }

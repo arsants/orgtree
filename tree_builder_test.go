@@ -21,7 +21,6 @@ func TestTreeBuilder(t *testing.T) {
 		ID:      uuid.New(),
 		Name:    "Главный офис",
 		SysName: "main_office",
-		TypeID:  nodeType.ID,
 		Type:    nodeType,
 	}
 
@@ -29,7 +28,6 @@ func TestTreeBuilder(t *testing.T) {
 		ID:      uuid.New(),
 		Name:    "IT отдел",
 		SysName: "it_department",
-		TypeID:  nodeType.ID,
 		Type:    nodeType,
 	}
 
