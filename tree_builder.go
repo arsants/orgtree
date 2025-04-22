@@ -6,19 +6,15 @@ import (
 
 // TreeBuilder представляет построитель дерева организационной структуры
 type TreeBuilder struct {
-	nodes     map[uuid.UUID]*OrgNode
-	edges     map[uuid.UUID]*Edge
-	positions map[uuid.UUID]*Position
-	relations map[uuid.UUID]*PositionNodeRelation
+	nodes map[uuid.UUID]*OrgNode
+	edges []*Edge
 }
 
 // NewTreeBuilder создает новый экземпляр TreeBuilder
 func NewTreeBuilder() *TreeBuilder {
 	return &TreeBuilder{
-		nodes:     make(map[uuid.UUID]*OrgNode),
-		edges:     make(map[uuid.UUID]*Edge),
-		positions: make(map[uuid.UUID]*Position),
-		relations: make(map[uuid.UUID]*PositionNodeRelation),
+		nodes: make(map[uuid.UUID]*OrgNode),
+		edges: make([]*Edge, 0),
 	}
 }
 
@@ -29,60 +25,60 @@ func (tb *TreeBuilder) AddNode(node *OrgNode) {
 
 // AddEdge добавляет связь в построитель
 func (tb *TreeBuilder) AddEdge(edge *Edge) {
-	tb.edges[edge.ID] = edge
+	tb.edges = append(tb.edges, edge)
 }
 
-// AddPosition добавляет должность в построитель
-func (tb *TreeBuilder) AddPosition(position *Position) {
-	tb.positions[position.ID] = position
+// Nodes возвращает карту добавленных узлов
+func (tb *TreeBuilder) Nodes() map[uuid.UUID]*OrgNode {
+	return tb.nodes
 }
 
-// AddPositionNodeRelation добавляет связь должности с узлом
-func (tb *TreeBuilder) AddPositionNodeRelation(relation *PositionNodeRelation) {
-	tb.relations[relation.ID] = relation
+// Edges возвращает срез добавленных ребер
+func (tb *TreeBuilder) Edges() []*Edge {
+	return tb.edges
+}
+
+// Node возвращает узел по ID и флаг его существования
+func (tb *TreeBuilder) Node(id uuid.UUID) (*OrgNode, bool) {
+	node, ok := tb.nodes[id]
+	return node, ok
 }
 
 // BuildTree строит дерево из добавленных данных
 func (tb *TreeBuilder) BuildTree() *Node {
-	// Создаем корневой узел
-	root := NewNode(nil)
-
-	// Создаем карту для хранения узлов дерева
+	// Создаем все узлы дерева
 	treeNodes := make(map[uuid.UUID]*Node)
-
-	// Сначала создаем все узлы дерева
 	for _, orgNode := range tb.nodes {
-		treeNode := NewNode(orgNode)
-		treeNodes[orgNode.ID] = treeNode
+		treeNodes[orgNode.ID] = NewNode(orgNode)
 	}
 
-	// Затем добавляем связи между узлами
-	for _, edge := range tb.edges {
-		fromNode, exists := treeNodes[edge.FromNode]
-		if !exists {
-			continue
-		}
-
-		toNode, exists := treeNodes[edge.ToNode]
-		if !exists {
-			continue
-		}
-
-		fromNode.AddChild(toNode)
-	}
-
-	// Находим корневые узлы (те, у которых нет входящих связей)
+	// Ищем входящие связи
 	hasIncoming := make(map[uuid.UUID]bool)
 	for _, edge := range tb.edges {
 		hasIncoming[edge.ToNode] = true
 	}
 
-	// Добавляем корневые узлы в корневой узел дерева
-	for id, treeNode := range treeNodes {
+	// Определяем корневые узлы
+	rootNodes := []*Node{}
+	for id, node := range treeNodes {
 		if !hasIncoming[id] {
-			root.AddChild(treeNode)
+			rootNodes = append(rootNodes, node)
 		}
 	}
 
-	return root
+	// Устанавливаем дочерние связи
+	for _, edge := range tb.edges {
+		if fromNode, ok := treeNodes[edge.FromNode]; ok {
+			if toNode, ok2 := treeNodes[edge.ToNode]; ok2 {
+				fromNode.AddChild(toNode)
+			}
+		}
+	}
+
+	// Оборачиваем корневые узлы в общий узел-заглушку
+	wrapper := NewNode(nil)
+	for _, rn := range rootNodes {
+		wrapper.AddChild(rn)
+	}
+	return wrapper
 }

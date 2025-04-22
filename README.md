@@ -79,18 +79,23 @@ if ok {
 ### Работа с должностями
 
 ```go
+import (
+    "github.com/yourusername/orgtree"
+    "github.com/google/uuid"
+)
+
 // Создание должностей
-position := orgtree.Position{
+position := &orgtree.Position{
     ID:      uuid.New(),
     Name:    "Senior Developer",
-    Sysname: "senior_developer",
+    SysName: "senior_developer",
 }
 
 // Создание связи между должностью и узлом
-relation := orgtree.PositionNodeRelation{
-    ID:         uuid.New(),
-    NodeID:     cto.ID,
-    PositionID: position.ID,
+relation := &orgtree.PositionNodeRelation{
+    ID:       uuid.New(),
+    NodeID:   cto.ID,
+    Position: position,
 }
 ```
 
@@ -108,7 +113,7 @@ positions := cto.GetPositions()
 
 ```go
 // Сериализация дерева в JSON
-jsonData, err := orgtree.ToJSON(root)
+jsonData, err := root.ToJSON()
 if err != nil {
     log.Fatal(err)
 }
@@ -160,10 +165,11 @@ root.PrintTree()
 Библиотека имеет полное тестовое покрытие. Все основные функции протестированы:
 
 - `Node` - базовые операции с узлами
+- `NodeUtils` - вспомогательные функции для работы с деревом
 - `TreeBuilder` - построение деревьев
-- `JSON` - сериализация и десериализация
 - `Filter` - фильтрация узлов
-- `NodeUtils` - утилиты для работы с деревом
+- `JSON` - сериализация и десериализация
+- `Iterator` - обход дерева
 
 Запуск тестов:
 
@@ -171,26 +177,26 @@ root.PrintTree()
 go test ./...
 ```
 
+Для генерации отчета о покрытии:
+
+```bash
+make test-all
+```
+
+После выполнения команды будет создан файл `coverage.html` с подробным отчетом о покрытии кода тестами.
+
 ## Структура проекта
 
 ```
 orgtree/
-├── cmd/                  # Директория с исполняемыми файлами
-│   └── orgtree/         # Основной исполняемый файл
-│       └── main.go      # Точка входа приложения
-├── binaries/            # Директория для скомпилированных бинарных файлов
+├── cmd/                 # Директория с исполняемыми файлами
 ├── node.go              # Основные структуры и интерфейсы
 ├── node_utils.go        # Вспомогательные функции для работы с узлами
 ├── iterator.go          # Реализация итераторов для обхода дерева
 ├── filter.go            # Функции фильтрации дерева
-├── node_test.go         # Тесты базовых операций с узлами
-├── filter_test.go       # Тесты фильтрации
-├── hash_test.go         # Тесты хеширования
-├── json_test.go         # Тесты сериализации
-├── orgtree.json         # Пример JSON-структуры
-├── go.mod               # Go модуль
+├── tree_builder.go      # Построитель деревьев
+├── models.go            # Модели данных
 ├── Makefile             # Команды для сборки и тестирования
-├── .gitignore          # Игнорируемые Git файлы
 └── README.md            # Документация
 ```
 

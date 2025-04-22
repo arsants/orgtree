@@ -33,3 +33,4 @@ Thumbs.db
 
 # Файл с покрытием тестов
 coverage.html
+coverage.out
