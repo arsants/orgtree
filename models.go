@@ -18,6 +18,12 @@ type OrgNode struct {
 	Type     *NodeType `json:"type,omitempty"`
 }
 
+type EmployeeNode struct {
+	ID   uuid.UUID `json:"id"`
+	Name string    `json:"name"`
+	Type *NodeType `json:"type,omitempty"`
+}
+
 // EdgeType представляет тип связи между узлами
 type EdgeType struct {
 	ID      uuid.UUID `json:"id"`

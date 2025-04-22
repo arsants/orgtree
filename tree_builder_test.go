@@ -361,3 +361,426 @@ func TestTreeBuilderWithPositions(t *testing.T) {
 		t.Errorf("Неверная должность в команде разработки, ожидался ID %s, получен %s", engineerPosition.ID, devTeamNodeValue.Position.ID)
 	}
 }
+
+func TestTreeBuilderWithEmployees(t *testing.T) {
+	builder := NewTreeBuilder()
+
+	// Создаем типы узлов
+	departmentType := &NodeType{
+		ID:      uuid.New(),
+		Name:    "Отдел",
+		SysName: "department",
+	}
+
+	teamType := &NodeType{
+		ID:      uuid.New(),
+		Name:    "Команда",
+		SysName: "team",
+	}
+
+	employeeType := &NodeType{
+		ID:      uuid.New(),
+		Name:    "Сотрудник",
+		SysName: "employee",
+	}
+
+	// Создаем должности
+	managerPosition := &Position{
+		ID:      uuid.New(),
+		Name:    "Руководитель команды",
+		SysName: "team_lead",
+	}
+
+	developerPosition := &Position{
+		ID:      uuid.New(),
+		Name:    "Разработчик",
+		SysName: "developer",
+	}
+
+	// Создаем отдел
+	itDepartment := &OrgNode{
+		ID:       uuid.New(),
+		Name:     "IT отдел",
+		SysName:  "it_department",
+		Type:     departmentType,
+		Position: managerPosition,
+	}
+
+	// Создаем команду
+	devTeam := &OrgNode{
+		ID:       uuid.New(),
+		Name:     "Команда разработки",
+		SysName:  "dev_team",
+		Type:     teamType,
+		Position: managerPosition,
+	}
+
+	// Создаем сотрудников
+	employee1 := &OrgNode{
+		ID:       uuid.New(),
+		Name:     "Иван Иванов",
+		SysName:  "ivan_ivanov",
+		Type:     employeeType,
+		Position: developerPosition,
+	}
+
+	employee2 := &OrgNode{
+		ID:       uuid.New(),
+		Name:     "Петр Петров",
+		SysName:  "petr_petrov",
+		Type:     employeeType,
+		Position: developerPosition,
+	}
+
+	// Добавляем узлы
+	builder.AddNode(itDepartment)
+	builder.AddNode(devTeam)
+	builder.AddNode(employee1)
+	builder.AddNode(employee2)
+
+	// Добавляем связи
+	builder.AddEdge(&Edge{
+		FromNode: itDepartment.ID,
+		ToNode:   devTeam.ID,
+	})
+
+	builder.AddEdge(&Edge{
+		FromNode: devTeam.ID,
+		ToNode:   employee1.ID,
+	})
+
+	builder.AddEdge(&Edge{
+		FromNode: devTeam.ID,
+		ToNode:   employee2.ID,
+	})
+
+	// Строим дерево
+	tree := builder.BuildTree()
+
+	// Проверяем структуру дерева
+	if len(tree.Children) != 1 {
+		t.Fatalf("Ожидался один корневой узел (IT отдел), получено %d", len(tree.Children))
+	}
+
+	// Проверяем IT отдел
+	itDeptNode := tree.Children[0]
+	itDeptValue, ok := itDeptNode.Value.(*OrgNode)
+	if !ok || itDeptValue.ID != itDepartment.ID {
+		t.Fatalf("Неверный корневой узел, ожидался IT отдел")
+	}
+
+	// Проверяем команду разработки
+	if len(itDeptNode.Children) != 1 {
+		t.Fatalf("Ожидалась одна команда в IT отделе, получено %d", len(itDeptNode.Children))
+	}
+
+	devTeamNode := itDeptNode.Children[0]
+	devTeamValue, ok := devTeamNode.Value.(*OrgNode)
+	if !ok || devTeamValue.ID != devTeam.ID {
+		t.Fatalf("Неверный узел команды разработки")
+	}
+
+	// Проверяем сотрудников
+	if len(devTeamNode.Children) != 2 {
+		t.Fatalf("Ожидалось два сотрудника в команде разработки, получено %d", len(devTeamNode.Children))
+	}
+
+	// Проверяем первого сотрудника
+	employee1Node := devTeamNode.Children[0]
+	employee1Value, ok := employee1Node.Value.(*OrgNode)
+	if !ok || employee1Value.ID != employee1.ID {
+		t.Errorf("Неверный узел первого сотрудника")
+	}
+	if employee1Value.Type.SysName != "employee" {
+		t.Errorf("Неверный тип узла первого сотрудника, ожидался 'employee', получен '%s'", employee1Value.Type.SysName)
+	}
+	if employee1Value.Position.ID != developerPosition.ID {
+		t.Errorf("Неверная должность первого сотрудника")
+	}
+
+	// Проверяем второго сотрудника
+	employee2Node := devTeamNode.Children[1]
+	employee2Value, ok := employee2Node.Value.(*OrgNode)
+	if !ok || employee2Value.ID != employee2.ID {
+		t.Errorf("Неверный узел второго сотрудника")
+	}
+	if employee2Value.Type.SysName != "employee" {
+		t.Errorf("Неверный тип узла второго сотрудника, ожидался 'employee', получен '%s'", employee2Value.Type.SysName)
+	}
+	if employee2Value.Position.ID != developerPosition.ID {
+		t.Errorf("Неверная должность второго сотрудника")
+	}
+}
+
+func TestTreeBuilderFilterEmployees(t *testing.T) {
+	builder := NewTreeBuilder()
+
+	// Создаем типы узлов
+	departmentType := &NodeType{
+		ID:      uuid.New(),
+		Name:    "Отдел",
+		SysName: "department",
+	}
+
+	teamType := &NodeType{
+		ID:      uuid.New(),
+		Name:    "Команда",
+		SysName: "team",
+	}
+
+	subteamType := &NodeType{
+		ID:      uuid.New(),
+		Name:    "Подкоманда",
+		SysName: "subteam",
+	}
+
+	employeeType := &NodeType{
+		ID:      uuid.New(),
+		Name:    "Сотрудник",
+		SysName: "employee",
+	}
+
+	// Создаем должности
+	managerPosition := &Position{
+		ID:      uuid.New(),
+		Name:    "Руководитель команды",
+		SysName: "team_lead",
+	}
+
+	developerPosition := &Position{
+		ID:      uuid.New(),
+		Name:    "Разработчик",
+		SysName: "developer",
+	}
+
+	qaPosition := &Position{
+		ID:      uuid.New(),
+		Name:    "Тестировщик",
+		SysName: "qa_engineer",
+	}
+
+	// Создаем отдел
+	itDepartment := &OrgNode{
+		ID:       uuid.New(),
+		Name:     "IT отдел",
+		SysName:  "it_department",
+		Type:     departmentType,
+		Position: managerPosition,
+	}
+
+	// Создаем команды
+	devTeam := &OrgNode{
+		ID:       uuid.New(),
+		Name:     "Команда разработки",
+		SysName:  "dev_team",
+		Type:     teamType,
+		Position: managerPosition,
+	}
+
+	qaTeam := &OrgNode{
+		ID:       uuid.New(),
+		Name:     "Команда тестирования",
+		SysName:  "qa_team",
+		Type:     teamType,
+		Position: managerPosition,
+	}
+
+	// Создаем подкоманды
+	frontendTeam := &OrgNode{
+		ID:       uuid.New(),
+		Name:     "Frontend команда",
+		SysName:  "frontend_team",
+		Type:     subteamType,
+		Position: managerPosition,
+	}
+
+	backendTeam := &OrgNode{
+		ID:       uuid.New(),
+		Name:     "Backend команда",
+		SysName:  "backend_team",
+		Type:     subteamType,
+		Position: managerPosition,
+	}
+
+	automationTeam := &OrgNode{
+		ID:       uuid.New(),
+		Name:     "Команда автоматизации",
+		SysName:  "automation_team",
+		Type:     subteamType,
+		Position: managerPosition,
+	}
+
+	manualTeam := &OrgNode{
+		ID:       uuid.New(),
+		Name:     "Команда ручного тестирования",
+		SysName:  "manual_team",
+		Type:     subteamType,
+		Position: managerPosition,
+	}
+
+	// Создаем сотрудников
+	employees := []struct {
+		name     string
+		sysName  string
+		position *Position
+	}{
+		// Разработчики Frontend
+		{"Иван Иванов", "ivan_ivanov", developerPosition},
+		{"Петр Петров", "petr_petrov", developerPosition},
+		{"Анна Сидорова", "anna_sidorova", developerPosition},
+
+		// Разработчики Backend
+		{"Сергей Сергеев", "sergey_sergeev", developerPosition},
+		{"Мария Петрова", "maria_petrova", developerPosition},
+		{"Алексей Алексеев", "alexey_alexeev", developerPosition},
+
+		// Тестировщики автоматизации
+		{"Елена Еленова", "elena_elenova", qaPosition},
+		{"Дмитрий Дмитриев", "dmitry_dmitriev", qaPosition},
+
+		// Тестировщики ручного тестирования
+		{"Ольга Ольгова", "olga_olgova", qaPosition},
+		{"Николай Николаев", "nikolay_nikolaev", qaPosition},
+	}
+
+	// Добавляем узлы
+	builder.AddNode(itDepartment)
+	builder.AddNode(devTeam)
+	builder.AddNode(qaTeam)
+	builder.AddNode(frontendTeam)
+	builder.AddNode(backendTeam)
+	builder.AddNode(automationTeam)
+	builder.AddNode(manualTeam)
+
+	// Создаем и добавляем сотрудников
+	employeeNodes := make([]*EmployeeNode, len(employees))
+	for i, emp := range employees {
+		employee := &EmployeeNode{
+			ID:   uuid.New(),
+			Name: emp.name,
+			Type: employeeType,
+		}
+		employeeNodes[i] = employee
+		builder.AddNode(employee)
+	}
+
+	// Добавляем связи между отделами и командами
+	builder.AddEdge(&Edge{
+		FromNode: itDepartment.ID,
+		ToNode:   devTeam.ID,
+	})
+	builder.AddEdge(&Edge{
+		FromNode: itDepartment.ID,
+		ToNode:   qaTeam.ID,
+	})
+
+	// Добавляем связи между командами и подкомандами
+	builder.AddEdge(&Edge{
+		FromNode: devTeam.ID,
+		ToNode:   frontendTeam.ID,
+	})
+	builder.AddEdge(&Edge{
+		FromNode: devTeam.ID,
+		ToNode:   backendTeam.ID,
+	})
+	builder.AddEdge(&Edge{
+		FromNode: qaTeam.ID,
+		ToNode:   automationTeam.ID,
+	})
+	builder.AddEdge(&Edge{
+		FromNode: qaTeam.ID,
+		ToNode:   manualTeam.ID,
+	})
+
+	// Распределяем сотрудников по подкомандам
+	// Frontend команда
+	builder.AddEdge(&Edge{
+		FromNode: frontendTeam.ID,
+		ToNode:   employeeNodes[0].ID,
+	})
+	builder.AddEdge(&Edge{
+		FromNode: frontendTeam.ID,
+		ToNode:   employeeNodes[1].ID,
+	})
+	builder.AddEdge(&Edge{
+		FromNode: frontendTeam.ID,
+		ToNode:   employeeNodes[2].ID,
+	})
+
+	// Backend команда
+	builder.AddEdge(&Edge{
+		FromNode: backendTeam.ID,
+		ToNode:   employeeNodes[3].ID,
+	})
+	builder.AddEdge(&Edge{
+		FromNode: backendTeam.ID,
+		ToNode:   employeeNodes[4].ID,
+	})
+	builder.AddEdge(&Edge{
+		FromNode: backendTeam.ID,
+		ToNode:   employeeNodes[5].ID,
+	})
+
+	// Команда автоматизации
+	builder.AddEdge(&Edge{
+		FromNode: automationTeam.ID,
+		ToNode:   employeeNodes[6].ID,
+	})
+	builder.AddEdge(&Edge{
+		FromNode: automationTeam.ID,
+		ToNode:   employeeNodes[7].ID,
+	})
+
+	// Команда ручного тестирования
+	builder.AddEdge(&Edge{
+		FromNode: manualTeam.ID,
+		ToNode:   employeeNodes[8].ID,
+	})
+	builder.AddEdge(&Edge{
+		FromNode: manualTeam.ID,
+		ToNode:   employeeNodes[9].ID,
+	})
+
+	// Строим дерево
+	tree := builder.BuildTree()
+
+	// Создаем предикат для фильтрации сотрудников
+	employeePredicate := func(value interface{}) bool {
+		if employeeNode, ok := value.(*EmployeeNode); ok {
+			return employeeNode.Type != nil && employeeNode.Type.SysName == "employee"
+		}
+		return false
+	}
+
+	// Фильтруем дерево
+	filteredTree := tree.FilterSubtree(employeePredicate)
+
+	// Проверяем результат фильтрации
+	if filteredTree == nil {
+		t.Fatal("Ожидалось непустое отфильтрованное дерево")
+	}
+
+	// Проверяем, что в отфильтрованном дереве только сотрудники
+	iterator := NewPreOrderIterator(filteredTree)
+	employeeCount := 0
+	for node := iterator.Next(); node != nil; node = iterator.Next() {
+		if node.Value == nil {
+			continue // Пропускаем корневой узел-обертку
+		}
+
+		switch node.Value.(type) {
+		case *OrgNode:
+			continue
+		case *EmployeeNode:
+			employeeCount++
+		default:
+			t.Errorf("Неизвестный тип узла: %T", node.Value)
+		}
+
+	}
+
+	// Проверяем количество найденных сотрудников
+	if employeeCount != len(employees) {
+		t.Errorf("Ожидалось %d сотрудников, найдено %d", len(employees), employeeCount)
+	}
+}

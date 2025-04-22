@@ -6,21 +6,28 @@ import (
 
 // TreeBuilder представляет построитель дерева организационной структуры
 type TreeBuilder struct {
-	nodes map[uuid.UUID]*OrgNode
-	edges []*Edge
+	nodes         map[uuid.UUID]*OrgNode
+	edges         []*Edge
+	employeeNodes map[uuid.UUID]*EmployeeNode
 }
 
 // NewTreeBuilder создает новый экземпляр TreeBuilder
 func NewTreeBuilder() *TreeBuilder {
 	return &TreeBuilder{
-		nodes: make(map[uuid.UUID]*OrgNode),
-		edges: make([]*Edge, 0),
+		nodes:         make(map[uuid.UUID]*OrgNode),
+		edges:         make([]*Edge, 0),
+		employeeNodes: make(map[uuid.UUID]*EmployeeNode),
 	}
 }
 
 // AddNode добавляет узел в построитель
-func (tb *TreeBuilder) AddNode(node *OrgNode) {
-	tb.nodes[node.ID] = node
+func (tb *TreeBuilder) AddNode(node interface{}) {
+	switch node := node.(type) {
+	case *OrgNode:
+		tb.nodes[node.ID] = node
+	case *EmployeeNode:
+		tb.employeeNodes[node.ID] = node
+	}
 }
 
 // AddEdge добавляет связь в построитель
@@ -50,6 +57,10 @@ func (tb *TreeBuilder) BuildTree() *Node {
 	treeNodes := make(map[uuid.UUID]*Node)
 	for _, orgNode := range tb.nodes {
 		treeNodes[orgNode.ID] = NewNode(orgNode)
+	}
+
+	for _, employeeNode := range tb.employeeNodes {
+		treeNodes[employeeNode.ID] = NewNode(employeeNode)
 	}
 
 	// Ищем входящие связи
