@@ -221,6 +221,67 @@ func main() {
 	}
 	builder.AddNode(itDept)
 
+	// Создаем подразделения IT отдела
+	itTeams := []struct {
+		name    string
+		sysName string
+	}{
+		{"Команда разработки", "development_team"},
+		{"Команда тестирования", "qa_team"},
+		{"DevOps команда", "devops_team"},
+	}
+
+	itSubteams := map[string][]struct {
+		name    string
+		sysName string
+	}{
+		"development_team": {
+			{"Frontend команда", "frontend_team"},
+			{"Backend команда", "backend_team"},
+			{"Mobile команда", "mobile_team"},
+		},
+		"qa_team": {
+			{"Команда автоматизации", "automation_team"},
+			{"Команда ручного тестирования", "manual_team"},
+		},
+	}
+
+	// Создаем узлы для IT команд
+	itTeamNodes := make(map[string]*orgtree.OrgNode)
+	for _, team := range itTeams {
+		node := &orgtree.OrgNode{
+			ID:      uuid.New(),
+			Name:    team.name,
+			SysName: team.sysName,
+			TypeID:  nodeType.ID,
+			Type:    nodeType,
+		}
+		builder.AddNode(node)
+		itTeamNodes[team.sysName] = node
+
+		// Добавляем подкоманды
+		if subteams, ok := itSubteams[team.sysName]; ok {
+			for _, subteam := range subteams {
+				subnode := &orgtree.OrgNode{
+					ID:      uuid.New(),
+					Name:    subteam.name,
+					SysName: subteam.sysName,
+					TypeID:  nodeType.ID,
+					Type:    nodeType,
+				}
+				builder.AddNode(subnode)
+				builder.AddEdge(&orgtree.Edge{
+					ID:       uuid.New(),
+					Name:     "Подчинение",
+					SysName:  "subordination",
+					FromNode: node.ID,
+					ToNode:   subnode.ID,
+				})
+			}
+		}
+	}
+
+	// Создаем HR отдел
 	hrDept := &orgtree.OrgNode{
 		ID:      uuid.New(),
 		Name:    "Отдел кадров",
@@ -229,6 +290,64 @@ func main() {
 		Type:    nodeType,
 	}
 	builder.AddNode(hrDept)
+
+	// Создаем подразделения HR отдела
+	hrTeams := []struct {
+		name    string
+		sysName string
+	}{
+		{"Команда рекрутинга", "recruitment_team"},
+		{"Команда обучения", "training_team"},
+	}
+
+	hrSubteams := map[string][]struct {
+		name    string
+		sysName string
+	}{
+		"recruitment_team": {
+			{"Команда технического рекрутинга", "tech_recruitment_team"},
+			{"Команда HR рекрутинга", "hr_recruitment_team"},
+		},
+		"training_team": {
+			{"Команда корпоративного обучения", "corporate_training_team"},
+			{"Команда адаптации", "onboarding_team"},
+		},
+	}
+
+	// Создаем узлы для HR команд
+	hrTeamNodes := make(map[string]*orgtree.OrgNode)
+	for _, team := range hrTeams {
+		node := &orgtree.OrgNode{
+			ID:      uuid.New(),
+			Name:    team.name,
+			SysName: team.sysName,
+			TypeID:  nodeType.ID,
+			Type:    nodeType,
+		}
+		builder.AddNode(node)
+		hrTeamNodes[team.sysName] = node
+
+		// Добавляем подкоманды
+		if subteams, ok := hrSubteams[team.sysName]; ok {
+			for _, subteam := range subteams {
+				subnode := &orgtree.OrgNode{
+					ID:      uuid.New(),
+					Name:    subteam.name,
+					SysName: subteam.sysName,
+					TypeID:  nodeType.ID,
+					Type:    nodeType,
+				}
+				builder.AddNode(subnode)
+				builder.AddEdge(&orgtree.Edge{
+					ID:       uuid.New(),
+					Name:     "Подчинение",
+					SysName:  "subordination",
+					FromNode: node.ID,
+					ToNode:   subnode.ID,
+				})
+			}
+		}
+	}
 
 	// Добавляем связи между узлами
 	builder.AddEdge(edge)
@@ -247,6 +366,28 @@ func main() {
 		ToNode:   hrDept.ID,
 	})
 
+	// Добавляем связи для IT отдела
+	for _, teamNode := range itTeamNodes {
+		builder.AddEdge(&orgtree.Edge{
+			ID:       uuid.New(),
+			Name:     "Подчинение",
+			SysName:  "subordination",
+			FromNode: itDept.ID,
+			ToNode:   teamNode.ID,
+		})
+	}
+
+	// Добавляем связи для HR отдела
+	for _, teamNode := range hrTeamNodes {
+		builder.AddEdge(&orgtree.Edge{
+			ID:       uuid.New(),
+			Name:     "Подчинение",
+			SysName:  "subordination",
+			FromNode: hrDept.ID,
+			ToNode:   teamNode.ID,
+		})
+	}
+
 	// Добавляем должности
 	builder.AddPosition(position)
 	itManager := &orgtree.Position{
@@ -262,6 +403,67 @@ func main() {
 	}
 	builder.AddPosition(hrManager)
 
+	// Создаем должности для команд
+	teamPositions := []struct {
+		name    string
+		sysName string
+	}{
+		{"Руководитель разработки", "development_lead"},
+		{"Руководитель тестирования", "qa_lead"},
+		{"Руководитель DevOps", "devops_lead"},
+		{"Руководитель рекрутинга", "recruitment_lead"},
+		{"Руководитель обучения", "training_lead"},
+	}
+
+	// Добавляем должности для подкоманд
+	subteamPositions := map[string][]struct {
+		name    string
+		sysName string
+	}{
+		"development_team": {
+			{"Руководитель Frontend", "frontend_lead"},
+			{"Руководитель Backend", "backend_lead"},
+			{"Руководитель Mobile", "mobile_lead"},
+		},
+		"qa_team": {
+			{"Руководитель автоматизации", "automation_lead"},
+			{"Руководитель ручного тестирования", "manual_qa_lead"},
+		},
+		"recruitment_team": {
+			{"Руководитель технического рекрутинга", "tech_recruitment_lead"},
+			{"Руководитель HR рекрутинга", "hr_recruitment_lead"},
+		},
+		"training_team": {
+			{"Руководитель корпоративного обучения", "corporate_training_lead"},
+			{"Руководитель адаптации", "onboarding_lead"},
+		},
+	}
+
+	// Добавляем должности и их связи
+	positionNodes := make(map[string]*orgtree.Position)
+	for _, pos := range teamPositions {
+		position := &orgtree.Position{
+			ID:      uuid.New(),
+			Name:    pos.name,
+			SysName: pos.sysName,
+		}
+		builder.AddPosition(position)
+		positionNodes[pos.sysName] = position
+	}
+
+	// Добавляем должности для подкоманд
+	for _, positions := range subteamPositions {
+		for _, pos := range positions {
+			position := &orgtree.Position{
+				ID:      uuid.New(),
+				Name:    pos.name,
+				SysName: pos.sysName,
+			}
+			builder.AddPosition(position)
+			positionNodes[pos.sysName] = position
+		}
+	}
+
 	// Добавляем связи должностей с узлами
 	builder.AddPositionNodeRelation(relation)
 	builder.AddPositionNodeRelation(&orgtree.PositionNodeRelation{
@@ -276,6 +478,29 @@ func main() {
 		PositionID: hrManager.ID,
 		Position:   hrManager,
 	})
+
+	// Добавляем связи должностей для команд
+	for sysName, teamNode := range itTeamNodes {
+		if pos, ok := positionNodes[sysName+"_lead"]; ok {
+			builder.AddPositionNodeRelation(&orgtree.PositionNodeRelation{
+				ID:         uuid.New(),
+				NodeID:     teamNode.ID,
+				PositionID: pos.ID,
+				Position:   pos,
+			})
+		}
+	}
+
+	for sysName, teamNode := range hrTeamNodes {
+		if pos, ok := positionNodes[sysName+"_lead"]; ok {
+			builder.AddPositionNodeRelation(&orgtree.PositionNodeRelation{
+				ID:         uuid.New(),
+				NodeID:     teamNode.ID,
+				PositionID: pos.ID,
+				Position:   pos,
+			})
+		}
+	}
 
 	// Построение дерева
 	orgTree := builder.BuildTree()
@@ -297,4 +522,48 @@ func main() {
 		}
 	})
 
+	// Демонстрация поиска в построенном дереве
+	fmt.Println("\n=== Демонстрация поиска в построенном дереве ===")
+
+	// Поиск отдела по имени
+	fmt.Println("\nПоиск отдела по имени:")
+	searchPredicate := func(value interface{}) bool {
+		if orgNode, ok := value.(*orgtree.OrgNode); ok {
+			return orgNode.Name == "IT отдел"
+		}
+		return false
+	}
+	if found := orgTree.Filter(searchPredicate); found != nil {
+		if orgNode, ok := found.Value.(*orgtree.OrgNode); ok {
+			fmt.Printf("Найден отдел: %s (ID: %s)\n", orgNode.Name, orgNode.ID)
+		}
+	}
+
+	// Поиск всех команд разработки
+	fmt.Println("\nПоиск всех команд разработки:")
+	devPattern := regexp.MustCompile("разработки")
+	devSubtree, err = orgTree.FilterSubtreeByRegex(devPattern.String())
+	if err != nil {
+		log.Printf("Ошибка при поиске команд разработки: %v", err)
+	} else if devSubtree != nil {
+		devJSON, _ := devSubtree.ToJSON()
+		fmt.Println("Найденные команды разработки:")
+		printJSON(devJSON)
+	}
+
+	// Поиск всех команд, содержащих определенное слово
+	fmt.Println("\nПоиск всех команд, содержащих 'команда':")
+	teamPredicate := func(value interface{}) bool {
+		if orgNode, ok := value.(*orgtree.OrgNode); ok {
+			return strings.Contains(orgNode.Name, "команда")
+		}
+		return false
+	}
+
+	teamSubtree := orgTree.FilterSubtree(teamPredicate)
+	if teamSubtree != nil {
+		teamJSON, _ := teamSubtree.ToJSON()
+		fmt.Println("Найденные команды:")
+		printJSON(teamJSON)
+	}
 }
