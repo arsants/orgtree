@@ -11,11 +11,11 @@ type NodeType struct {
 
 // OrgNode представляет узел в оргструктуре
 type OrgNode struct {
-	ID       uuid.UUID   `json:"id"`
-	Name     string      `json:"name"`
-	SysName  string      `json:"sysname"`
-	Position []*Position `json:"position,omitempty"`
-	Type     *NodeType   `json:"type,omitempty"`
+	ID        uuid.UUID   `json:"id"`
+	Name      string      `json:"name"`
+	SysName   string      `json:"sysname"`
+	Positions []*Position `json:"positions,omitempty"`
+	Type      *NodeType   `json:"type,omitempty"`
 }
 
 type EmployeeNode struct {

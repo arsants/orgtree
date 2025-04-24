@@ -47,11 +47,11 @@ func BenchmarkFilterLargeTree(b *testing.B) {
 
 	// Создаем корневой узел
 	root := &OrgNode{
-		ID:       uuid.New(),
-		Name:     "Главный офис",
-		SysName:  "main_office",
-		Type:     departmentType,
-		Position: []*Position{managerPosition},
+		ID:        uuid.New(),
+		Name:      "Главный офис",
+		SysName:   "main_office",
+		Type:      departmentType,
+		Positions: []*Position{managerPosition},
 	}
 	builder.AddNode(root)
 
@@ -69,11 +69,11 @@ func BenchmarkFilterLargeTree(b *testing.B) {
 	// Создаем отделы
 	for i := 0; i < numDepartments; i++ {
 		dept := &OrgNode{
-			ID:       uuid.New(),
-			Name:     "Отдел " + string(rune('A'+i)),
-			SysName:  "department_" + string(rune('a'+i)),
-			Type:     departmentType,
-			Position: []*Position{managerPosition},
+			ID:        uuid.New(),
+			Name:      "Отдел " + string(rune('A'+i)),
+			SysName:   "department_" + string(rune('a'+i)),
+			Type:      departmentType,
+			Positions: []*Position{managerPosition},
 		}
 		builder.AddNode(dept)
 		builder.AddEdge(&Edge{
@@ -87,11 +87,11 @@ func BenchmarkFilterLargeTree(b *testing.B) {
 	for _, dept := range departmentNodes {
 		for i := 0; i < numTeams; i++ {
 			team := &OrgNode{
-				ID:       uuid.New(),
-				Name:     "Команда " + string(rune('A'+i)),
-				SysName:  "team_" + string(rune('a'+i)),
-				Type:     teamType,
-				Position: []*Position{managerPosition},
+				ID:        uuid.New(),
+				Name:      "Команда " + string(rune('A'+i)),
+				SysName:   "team_" + string(rune('a'+i)),
+				Type:      teamType,
+				Positions: []*Position{managerPosition},
 			}
 			builder.AddNode(team)
 			builder.AddEdge(&Edge{
@@ -102,11 +102,11 @@ func BenchmarkFilterLargeTree(b *testing.B) {
 			// Создаем сотрудников для каждой команды
 			for j := 0; j < numEmployees; j++ {
 				employee := &OrgNode{
-					ID:       uuid.New(),
-					Name:     "Сотрудник " + string(rune('A'+j)),
-					SysName:  "employee_" + string(rune('a'+j)),
-					Type:     employeeType,
-					Position: []*Position{developerPosition},
+					ID:        uuid.New(),
+					Name:      "Сотрудник " + string(rune('A'+j)),
+					SysName:   "employee_" + string(rune('a'+j)),
+					Type:      employeeType,
+					Positions: []*Position{developerPosition},
 				}
 				builder.AddNode(employee)
 				builder.AddEdge(&Edge{
@@ -190,11 +190,11 @@ func BenchmarkFilterDifferentSizes(b *testing.B) {
 
 			// Создаем корневой узел
 			root := &OrgNode{
-				ID:       uuid.New(),
-				Name:     "Главный офис",
-				SysName:  "main_office",
-				Type:     departmentType,
-				Position: []*Position{managerPosition},
+				ID:        uuid.New(),
+				Name:      "Главный офис",
+				SysName:   "main_office",
+				Type:      departmentType,
+				Positions: []*Position{managerPosition},
 			}
 			builder.AddNode(root)
 
@@ -203,11 +203,11 @@ func BenchmarkFilterDifferentSizes(b *testing.B) {
 			// Создаем отделы
 			for i := 0; i < size.departments; i++ {
 				dept := &OrgNode{
-					ID:       uuid.New(),
-					Name:     fmt.Sprintf("Отдел %d", i),
-					SysName:  fmt.Sprintf("department_%d", i),
-					Type:     departmentType,
-					Position: []*Position{managerPosition},
+					ID:        uuid.New(),
+					Name:      fmt.Sprintf("Отдел %d", i),
+					SysName:   fmt.Sprintf("department_%d", i),
+					Type:      departmentType,
+					Positions: []*Position{managerPosition},
 				}
 				builder.AddNode(dept)
 				builder.AddEdge(&Edge{
@@ -221,11 +221,11 @@ func BenchmarkFilterDifferentSizes(b *testing.B) {
 			for _, dept := range departmentNodes {
 				for i := 0; i < size.teams; i++ {
 					team := &OrgNode{
-						ID:       uuid.New(),
-						Name:     fmt.Sprintf("Команда %d", i),
-						SysName:  fmt.Sprintf("team_%d", i),
-						Type:     teamType,
-						Position: []*Position{managerPosition},
+						ID:        uuid.New(),
+						Name:      fmt.Sprintf("Команда %d", i),
+						SysName:   fmt.Sprintf("team_%d", i),
+						Type:      teamType,
+						Positions: []*Position{managerPosition},
 					}
 					builder.AddNode(team)
 					builder.AddEdge(&Edge{
@@ -236,11 +236,11 @@ func BenchmarkFilterDifferentSizes(b *testing.B) {
 					// Создаем сотрудников для каждой команды
 					for j := 0; j < size.employees; j++ {
 						employee := &OrgNode{
-							ID:       uuid.New(),
-							Name:     fmt.Sprintf("Сотрудник %d", j),
-							SysName:  fmt.Sprintf("employee_%d", j),
-							Type:     employeeType,
-							Position: []*Position{developerPosition},
+							ID:        uuid.New(),
+							Name:      fmt.Sprintf("Сотрудник %d", j),
+							SysName:   fmt.Sprintf("employee_%d", j),
+							Type:      employeeType,
+							Positions: []*Position{developerPosition},
 						}
 						builder.AddNode(employee)
 						builder.AddEdge(&Edge{
@@ -305,11 +305,11 @@ func BenchmarkFilterDifferentTypes(b *testing.B) {
 
 	// Создаем корневой узел
 	root := &OrgNode{
-		ID:       uuid.New(),
-		Name:     "Главный офис",
-		SysName:  "main_office",
-		Type:     departmentType,
-		Position: []*Position{managerPosition},
+		ID:        uuid.New(),
+		Name:      "Главный офис",
+		SysName:   "main_office",
+		Type:      departmentType,
+		Positions: []*Position{managerPosition},
 	}
 	builder.AddNode(root)
 
@@ -325,11 +325,11 @@ func BenchmarkFilterDifferentTypes(b *testing.B) {
 	// Создаем отделы
 	for i := 0; i < numDepartments; i++ {
 		dept := &OrgNode{
-			ID:       uuid.New(),
-			Name:     fmt.Sprintf("Отдел %d", i),
-			SysName:  fmt.Sprintf("department_%d", i),
-			Type:     departmentType,
-			Position: []*Position{managerPosition},
+			ID:        uuid.New(),
+			Name:      fmt.Sprintf("Отдел %d", i),
+			SysName:   fmt.Sprintf("department_%d", i),
+			Type:      departmentType,
+			Positions: []*Position{managerPosition},
 		}
 		builder.AddNode(dept)
 		builder.AddEdge(&Edge{
@@ -343,11 +343,11 @@ func BenchmarkFilterDifferentTypes(b *testing.B) {
 	for _, dept := range departmentNodes {
 		for i := 0; i < numTeams; i++ {
 			team := &OrgNode{
-				ID:       uuid.New(),
-				Name:     fmt.Sprintf("Команда %d", i),
-				SysName:  fmt.Sprintf("team_%d", i),
-				Type:     teamType,
-				Position: []*Position{managerPosition},
+				ID:        uuid.New(),
+				Name:      fmt.Sprintf("Команда %d", i),
+				SysName:   fmt.Sprintf("team_%d", i),
+				Type:      teamType,
+				Positions: []*Position{managerPosition},
 			}
 			builder.AddNode(team)
 			builder.AddEdge(&Edge{

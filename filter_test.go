@@ -52,32 +52,32 @@ func createTestTree() *Node {
 
 	// Создаем тестовые узлы
 	root := NewNode(&OrgNode{
-		ID:       uuid.New(),
-		Name:     "Engineering",
-		SysName:  "engineering",
-		Position: []*Position{ceoPos},
-		Type:     departmentType,
+		ID:        uuid.New(),
+		Name:      "Engineering",
+		SysName:   "engineering",
+		Positions: []*Position{ceoPos},
+		Type:      departmentType,
 	})
 	team1 := NewNode(&OrgNode{
-		ID:       uuid.New(),
-		Name:     "Backend Team",
-		SysName:  "backend_team",
-		Position: []*Position{devPos},
-		Type:     teamType,
+		ID:        uuid.New(),
+		Name:      "Backend Team",
+		SysName:   "backend_team",
+		Positions: []*Position{devPos},
+		Type:      teamType,
 	})
 	team2 := NewNode(&OrgNode{
-		ID:       uuid.New(),
-		Name:     "Frontend Team",
-		SysName:  "frontend_team",
-		Position: []*Position{devPos},
-		Type:     teamType,
+		ID:        uuid.New(),
+		Name:      "Frontend Team",
+		SysName:   "frontend_team",
+		Positions: []*Position{devPos},
+		Type:      teamType,
 	})
 	employee1 := NewNode(&OrgNode{
-		ID:       uuid.New(),
-		Name:     "John Doe",
-		SysName:  "john_doe",
-		Position: []*Position{qaPos},
-		Type:     employeeType,
+		ID:        uuid.New(),
+		Name:      "John Doe",
+		SysName:   "john_doe",
+		Positions: []*Position{qaPos},
+		Type:      employeeType,
 	})
 
 	// Строим дерево
@@ -144,7 +144,7 @@ func TestFilterSubtree(t *testing.T) {
 	t.Run("Filter by Position", func(t *testing.T) {
 		predicate := func(value interface{}) bool {
 			if orgNode, ok := value.(*OrgNode); ok {
-				for _, position := range orgNode.Position {
+				for _, position := range orgNode.Positions {
 					if position.Name == "Developer" {
 						return true
 					}

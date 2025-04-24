@@ -301,18 +301,18 @@ func TestTreeBuilderWithPositions(t *testing.T) {
 
 	// Узлы (с присвоением Position)
 	itDepartment := &OrgNode{
-		ID:       uuid.New(),
-		Name:     "IT отдел",
-		SysName:  "it_department",
-		Type:     departmentType,
-		Position: []*Position{managerPosition},
+		ID:        uuid.New(),
+		Name:      "IT отдел",
+		SysName:   "it_department",
+		Type:      departmentType,
+		Positions: []*Position{managerPosition},
 	}
 	devTeam := &OrgNode{
-		ID:       uuid.New(),
-		Name:     "Команда разработки",
-		SysName:  "dev_team",
-		Type:     departmentType,
-		Position: []*Position{engineerPosition},
+		ID:        uuid.New(),
+		Name:      "Команда разработки",
+		SysName:   "dev_team",
+		Type:      departmentType,
+		Positions: []*Position{engineerPosition},
 	}
 
 	// Добавляем узлы
@@ -340,10 +340,10 @@ func TestTreeBuilderWithPositions(t *testing.T) {
 	if !ok || itDeptNodeValue.ID != itDepartment.ID {
 		t.Fatalf("Неверный корневой узел, ожидался IT отдел")
 	}
-	if itDeptNodeValue.Position == nil {
+	if itDeptNodeValue.Positions == nil {
 		t.Errorf("В IT отделе ожидалась должность, получено nil")
-	} else if itDeptNodeValue.Position[0].ID != managerPosition.ID {
-		t.Errorf("Неверная должность в IT отделе, ожидался ID %s, получен %s", managerPosition.ID, itDeptNodeValue.Position[0].ID)
+	} else if itDeptNodeValue.Positions[0].ID != managerPosition.ID {
+		t.Errorf("Неверная должность в IT отделе, ожидался ID %s, получен %s", managerPosition.ID, itDeptNodeValue.Positions[0].ID)
 	}
 
 	// Проверяем команду разработки
@@ -355,10 +355,10 @@ func TestTreeBuilderWithPositions(t *testing.T) {
 	if !ok || devTeamNodeValue.ID != devTeam.ID {
 		t.Fatalf("Неверный узел команды разработки")
 	}
-	if devTeamNodeValue.Position == nil {
+	if devTeamNodeValue.Positions == nil {
 		t.Errorf("В команде разработки ожидалась должность, получено nil")
-	} else if devTeamNodeValue.Position[0].ID != engineerPosition.ID {
-		t.Errorf("Неверная должность в команде разработки, ожидался ID %s, получен %s", engineerPosition.ID, devTeamNodeValue.Position[0].ID)
+	} else if devTeamNodeValue.Positions[0].ID != engineerPosition.ID {
+		t.Errorf("Неверная должность в команде разработки, ожидался ID %s, получен %s", engineerPosition.ID, devTeamNodeValue.Positions[0].ID)
 	}
 }
 
@@ -399,37 +399,37 @@ func TestTreeBuilderWithEmployees(t *testing.T) {
 
 	// Создаем отдел
 	itDepartment := &OrgNode{
-		ID:       uuid.New(),
-		Name:     "IT отдел",
-		SysName:  "it_department",
-		Type:     departmentType,
-		Position: []*Position{managerPosition},
+		ID:        uuid.New(),
+		Name:      "IT отдел",
+		SysName:   "it_department",
+		Type:      departmentType,
+		Positions: []*Position{managerPosition},
 	}
 
 	// Создаем команду
 	devTeam := &OrgNode{
-		ID:       uuid.New(),
-		Name:     "Команда разработки",
-		SysName:  "dev_team",
-		Type:     teamType,
-		Position: []*Position{managerPosition},
+		ID:        uuid.New(),
+		Name:      "Команда разработки",
+		SysName:   "dev_team",
+		Type:      teamType,
+		Positions: []*Position{managerPosition},
 	}
 
 	// Создаем сотрудников
 	employee1 := &OrgNode{
-		ID:       uuid.New(),
-		Name:     "Иван Иванов",
-		SysName:  "ivan_ivanov",
-		Type:     employeeType,
-		Position: []*Position{developerPosition},
+		ID:        uuid.New(),
+		Name:      "Иван Иванов",
+		SysName:   "ivan_ivanov",
+		Type:      employeeType,
+		Positions: []*Position{developerPosition},
 	}
 
 	employee2 := &OrgNode{
-		ID:       uuid.New(),
-		Name:     "Петр Петров",
-		SysName:  "petr_petrov",
-		Type:     employeeType,
-		Position: []*Position{developerPosition},
+		ID:        uuid.New(),
+		Name:      "Петр Петров",
+		SysName:   "petr_petrov",
+		Type:      employeeType,
+		Positions: []*Position{developerPosition},
 	}
 
 	// Добавляем узлы
@@ -494,7 +494,7 @@ func TestTreeBuilderWithEmployees(t *testing.T) {
 	if employee1Value.Type.SysName != "employee" {
 		t.Errorf("Неверный тип узла первого сотрудника, ожидался 'employee', получен '%s'", employee1Value.Type.SysName)
 	}
-	if employee1Value.Position[0].ID != developerPosition.ID {
+	if employee1Value.Positions[0].ID != developerPosition.ID {
 		t.Errorf("Неверная должность первого сотрудника")
 	}
 
@@ -507,7 +507,7 @@ func TestTreeBuilderWithEmployees(t *testing.T) {
 	if employee2Value.Type.SysName != "employee" {
 		t.Errorf("Неверный тип узла второго сотрудника, ожидался 'employee', получен '%s'", employee2Value.Type.SysName)
 	}
-	if employee2Value.Position[0].ID != developerPosition.ID {
+	if employee2Value.Positions[0].ID != developerPosition.ID {
 		t.Errorf("Неверная должность второго сотрудника")
 	}
 }
@@ -561,61 +561,61 @@ func TestTreeBuilderFilterEmployees(t *testing.T) {
 
 	// Создаем отдел
 	itDepartment := &OrgNode{
-		ID:       uuid.New(),
-		Name:     "IT отдел",
-		SysName:  "it_department",
-		Type:     departmentType,
-		Position: []*Position{managerPosition},
+		ID:        uuid.New(),
+		Name:      "IT отдел",
+		SysName:   "it_department",
+		Type:      departmentType,
+		Positions: []*Position{managerPosition},
 	}
 
 	// Создаем команды
 	devTeam := &OrgNode{
-		ID:       uuid.New(),
-		Name:     "Команда разработки",
-		SysName:  "dev_team",
-		Type:     teamType,
-		Position: []*Position{managerPosition},
+		ID:        uuid.New(),
+		Name:      "Команда разработки",
+		SysName:   "dev_team",
+		Type:      teamType,
+		Positions: []*Position{managerPosition},
 	}
 
 	qaTeam := &OrgNode{
-		ID:       uuid.New(),
-		Name:     "Команда тестирования",
-		SysName:  "qa_team",
-		Type:     teamType,
-		Position: []*Position{managerPosition},
+		ID:        uuid.New(),
+		Name:      "Команда тестирования",
+		SysName:   "qa_team",
+		Type:      teamType,
+		Positions: []*Position{managerPosition},
 	}
 
 	// Создаем подкоманды
 	frontendTeam := &OrgNode{
-		ID:       uuid.New(),
-		Name:     "Frontend команда",
-		SysName:  "frontend_team",
-		Type:     subteamType,
-		Position: []*Position{managerPosition},
+		ID:        uuid.New(),
+		Name:      "Frontend команда",
+		SysName:   "frontend_team",
+		Type:      subteamType,
+		Positions: []*Position{managerPosition},
 	}
 
 	backendTeam := &OrgNode{
-		ID:       uuid.New(),
-		Name:     "Backend команда",
-		SysName:  "backend_team",
-		Type:     subteamType,
-		Position: []*Position{managerPosition},
+		ID:        uuid.New(),
+		Name:      "Backend команда",
+		SysName:   "backend_team",
+		Type:      subteamType,
+		Positions: []*Position{managerPosition},
 	}
 
 	automationTeam := &OrgNode{
-		ID:       uuid.New(),
-		Name:     "Команда автоматизации",
-		SysName:  "automation_team",
-		Type:     subteamType,
-		Position: []*Position{managerPosition},
+		ID:        uuid.New(),
+		Name:      "Команда автоматизации",
+		SysName:   "automation_team",
+		Type:      subteamType,
+		Positions: []*Position{managerPosition},
 	}
 
 	manualTeam := &OrgNode{
-		ID:       uuid.New(),
-		Name:     "Команда ручного тестирования",
-		SysName:  "manual_team",
-		Type:     subteamType,
-		Position: []*Position{managerPosition},
+		ID:        uuid.New(),
+		Name:      "Команда ручного тестирования",
+		SysName:   "manual_team",
+		Type:      subteamType,
+		Positions: []*Position{managerPosition},
 	}
 
 	// Создаем сотрудников
