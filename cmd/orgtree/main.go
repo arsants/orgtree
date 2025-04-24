@@ -184,10 +184,12 @@ func main() {
 		Name:    "Главный офис",
 		SysName: "main_office",
 		Type:    nodeType,
-		Position: &orgtree.Position{
-			ID:      uuid.New(),
-			Name:    "Директор",
-			SysName: "director",
+		Position: []*orgtree.Position{
+			{
+				ID:      uuid.New(),
+				Name:    "Директор",
+				SysName: "director",
+			},
 		},
 	}
 
@@ -200,10 +202,12 @@ func main() {
 		Name:    "IT отдел",
 		SysName: "it_department",
 		Type:    nodeType,
-		Position: &orgtree.Position{
-			ID:      uuid.New(),
-			Name:    "IT менеджер",
-			SysName: "it_manager",
+		Position: []*orgtree.Position{
+			{
+				ID:      uuid.New(),
+				Name:    "IT менеджер",
+				SysName: "it_manager",
+			},
 		},
 	}
 	builder.AddNode(itDept)
@@ -269,10 +273,12 @@ func main() {
 		Name:    "Отдел кадров",
 		SysName: "hr_department",
 		Type:    nodeType,
-		Position: &orgtree.Position{
-			ID:      uuid.New(),
-			Name:    "HR менеджер",
-			SysName: "hr_manager",
+		Position: []*orgtree.Position{
+			{
+				ID:      uuid.New(),
+				Name:    "HR менеджер",
+				SysName: "hr_manager",
+			},
 		},
 	}
 	builder.AddNode(hrDept)
@@ -433,14 +439,14 @@ func main() {
 	for sysName, teamNode := range itTeamNodes {
 		if leadSysName, ok := leadPositionMap[sysName]; ok {
 			if pos, posOK := positionsMap[leadSysName]; posOK {
-				teamNode.Position = pos
+				teamNode.Position = []*orgtree.Position{pos}
 			}
 		}
 	}
 	for sysName, teamNode := range hrTeamNodes {
 		if leadSysName, ok := leadPositionMap[sysName]; ok {
 			if pos, posOK := positionsMap[leadSysName]; posOK {
-				teamNode.Position = pos
+				teamNode.Position = []*orgtree.Position{pos}
 			}
 		}
 	}
@@ -467,12 +473,12 @@ func main() {
 		// Проверяем, является ли узел подкомандой и есть ли для него лид-должность
 		if leadSysName, leadExists := subteamLeadPositionMap[orgNode.SysName]; leadExists {
 			if pos, posOK := positionsMap[leadSysName]; posOK {
-				orgNode.Position = pos // Assign specific subteam lead position
+				orgNode.Position = []*orgtree.Position{pos} // Assign specific subteam lead position
 			} else {
-				orgNode.Position = defaultPosition // Assign default if lead pos not found in map
+				orgNode.Position = []*orgtree.Position{defaultPosition} // Assign default if lead pos not found in map
 			}
 		} else {
-			orgNode.Position = defaultPosition // Assign default if not a subteam lead
+			orgNode.Position = []*orgtree.Position{defaultPosition} // Assign default if not a subteam lead
 		}
 	}
 

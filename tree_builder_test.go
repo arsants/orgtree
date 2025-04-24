@@ -305,14 +305,14 @@ func TestTreeBuilderWithPositions(t *testing.T) {
 		Name:     "IT отдел",
 		SysName:  "it_department",
 		Type:     departmentType,
-		Position: managerPosition,
+		Position: []*Position{managerPosition},
 	}
 	devTeam := &OrgNode{
 		ID:       uuid.New(),
 		Name:     "Команда разработки",
 		SysName:  "dev_team",
 		Type:     departmentType,
-		Position: engineerPosition,
+		Position: []*Position{engineerPosition},
 	}
 
 	// Добавляем узлы
@@ -342,8 +342,8 @@ func TestTreeBuilderWithPositions(t *testing.T) {
 	}
 	if itDeptNodeValue.Position == nil {
 		t.Errorf("В IT отделе ожидалась должность, получено nil")
-	} else if itDeptNodeValue.Position.ID != managerPosition.ID {
-		t.Errorf("Неверная должность в IT отделе, ожидался ID %s, получен %s", managerPosition.ID, itDeptNodeValue.Position.ID)
+	} else if itDeptNodeValue.Position[0].ID != managerPosition.ID {
+		t.Errorf("Неверная должность в IT отделе, ожидался ID %s, получен %s", managerPosition.ID, itDeptNodeValue.Position[0].ID)
 	}
 
 	// Проверяем команду разработки
@@ -357,8 +357,8 @@ func TestTreeBuilderWithPositions(t *testing.T) {
 	}
 	if devTeamNodeValue.Position == nil {
 		t.Errorf("В команде разработки ожидалась должность, получено nil")
-	} else if devTeamNodeValue.Position.ID != engineerPosition.ID {
-		t.Errorf("Неверная должность в команде разработки, ожидался ID %s, получен %s", engineerPosition.ID, devTeamNodeValue.Position.ID)
+	} else if devTeamNodeValue.Position[0].ID != engineerPosition.ID {
+		t.Errorf("Неверная должность в команде разработки, ожидался ID %s, получен %s", engineerPosition.ID, devTeamNodeValue.Position[0].ID)
 	}
 }
 
@@ -403,7 +403,7 @@ func TestTreeBuilderWithEmployees(t *testing.T) {
 		Name:     "IT отдел",
 		SysName:  "it_department",
 		Type:     departmentType,
-		Position: managerPosition,
+		Position: []*Position{managerPosition},
 	}
 
 	// Создаем команду
@@ -412,7 +412,7 @@ func TestTreeBuilderWithEmployees(t *testing.T) {
 		Name:     "Команда разработки",
 		SysName:  "dev_team",
 		Type:     teamType,
-		Position: managerPosition,
+		Position: []*Position{managerPosition},
 	}
 
 	// Создаем сотрудников
@@ -421,7 +421,7 @@ func TestTreeBuilderWithEmployees(t *testing.T) {
 		Name:     "Иван Иванов",
 		SysName:  "ivan_ivanov",
 		Type:     employeeType,
-		Position: developerPosition,
+		Position: []*Position{developerPosition},
 	}
 
 	employee2 := &OrgNode{
@@ -429,7 +429,7 @@ func TestTreeBuilderWithEmployees(t *testing.T) {
 		Name:     "Петр Петров",
 		SysName:  "petr_petrov",
 		Type:     employeeType,
-		Position: developerPosition,
+		Position: []*Position{developerPosition},
 	}
 
 	// Добавляем узлы
@@ -494,7 +494,7 @@ func TestTreeBuilderWithEmployees(t *testing.T) {
 	if employee1Value.Type.SysName != "employee" {
 		t.Errorf("Неверный тип узла первого сотрудника, ожидался 'employee', получен '%s'", employee1Value.Type.SysName)
 	}
-	if employee1Value.Position.ID != developerPosition.ID {
+	if employee1Value.Position[0].ID != developerPosition.ID {
 		t.Errorf("Неверная должность первого сотрудника")
 	}
 
@@ -507,7 +507,7 @@ func TestTreeBuilderWithEmployees(t *testing.T) {
 	if employee2Value.Type.SysName != "employee" {
 		t.Errorf("Неверный тип узла второго сотрудника, ожидался 'employee', получен '%s'", employee2Value.Type.SysName)
 	}
-	if employee2Value.Position.ID != developerPosition.ID {
+	if employee2Value.Position[0].ID != developerPosition.ID {
 		t.Errorf("Неверная должность второго сотрудника")
 	}
 }
@@ -565,7 +565,7 @@ func TestTreeBuilderFilterEmployees(t *testing.T) {
 		Name:     "IT отдел",
 		SysName:  "it_department",
 		Type:     departmentType,
-		Position: managerPosition,
+		Position: []*Position{managerPosition},
 	}
 
 	// Создаем команды
@@ -574,7 +574,7 @@ func TestTreeBuilderFilterEmployees(t *testing.T) {
 		Name:     "Команда разработки",
 		SysName:  "dev_team",
 		Type:     teamType,
-		Position: managerPosition,
+		Position: []*Position{managerPosition},
 	}
 
 	qaTeam := &OrgNode{
@@ -582,7 +582,7 @@ func TestTreeBuilderFilterEmployees(t *testing.T) {
 		Name:     "Команда тестирования",
 		SysName:  "qa_team",
 		Type:     teamType,
-		Position: managerPosition,
+		Position: []*Position{managerPosition},
 	}
 
 	// Создаем подкоманды
@@ -591,7 +591,7 @@ func TestTreeBuilderFilterEmployees(t *testing.T) {
 		Name:     "Frontend команда",
 		SysName:  "frontend_team",
 		Type:     subteamType,
-		Position: managerPosition,
+		Position: []*Position{managerPosition},
 	}
 
 	backendTeam := &OrgNode{
@@ -599,7 +599,7 @@ func TestTreeBuilderFilterEmployees(t *testing.T) {
 		Name:     "Backend команда",
 		SysName:  "backend_team",
 		Type:     subteamType,
-		Position: managerPosition,
+		Position: []*Position{managerPosition},
 	}
 
 	automationTeam := &OrgNode{
@@ -607,7 +607,7 @@ func TestTreeBuilderFilterEmployees(t *testing.T) {
 		Name:     "Команда автоматизации",
 		SysName:  "automation_team",
 		Type:     subteamType,
-		Position: managerPosition,
+		Position: []*Position{managerPosition},
 	}
 
 	manualTeam := &OrgNode{
@@ -615,7 +615,7 @@ func TestTreeBuilderFilterEmployees(t *testing.T) {
 		Name:     "Команда ручного тестирования",
 		SysName:  "manual_team",
 		Type:     subteamType,
-		Position: managerPosition,
+		Position: []*Position{managerPosition},
 	}
 
 	// Создаем сотрудников

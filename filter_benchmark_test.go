@@ -51,7 +51,7 @@ func BenchmarkFilterLargeTree(b *testing.B) {
 		Name:     "Главный офис",
 		SysName:  "main_office",
 		Type:     departmentType,
-		Position: managerPosition,
+		Position: []*Position{managerPosition},
 	}
 	builder.AddNode(root)
 
@@ -73,7 +73,7 @@ func BenchmarkFilterLargeTree(b *testing.B) {
 			Name:     "Отдел " + string(rune('A'+i)),
 			SysName:  "department_" + string(rune('a'+i)),
 			Type:     departmentType,
-			Position: managerPosition,
+			Position: []*Position{managerPosition},
 		}
 		builder.AddNode(dept)
 		builder.AddEdge(&Edge{
@@ -91,7 +91,7 @@ func BenchmarkFilterLargeTree(b *testing.B) {
 				Name:     "Команда " + string(rune('A'+i)),
 				SysName:  "team_" + string(rune('a'+i)),
 				Type:     teamType,
-				Position: managerPosition,
+				Position: []*Position{managerPosition},
 			}
 			builder.AddNode(team)
 			builder.AddEdge(&Edge{
@@ -106,7 +106,7 @@ func BenchmarkFilterLargeTree(b *testing.B) {
 					Name:     "Сотрудник " + string(rune('A'+j)),
 					SysName:  "employee_" + string(rune('a'+j)),
 					Type:     employeeType,
-					Position: developerPosition,
+					Position: []*Position{developerPosition},
 				}
 				builder.AddNode(employee)
 				builder.AddEdge(&Edge{
@@ -194,7 +194,7 @@ func BenchmarkFilterDifferentSizes(b *testing.B) {
 				Name:     "Главный офис",
 				SysName:  "main_office",
 				Type:     departmentType,
-				Position: managerPosition,
+				Position: []*Position{managerPosition},
 			}
 			builder.AddNode(root)
 
@@ -207,7 +207,7 @@ func BenchmarkFilterDifferentSizes(b *testing.B) {
 					Name:     fmt.Sprintf("Отдел %d", i),
 					SysName:  fmt.Sprintf("department_%d", i),
 					Type:     departmentType,
-					Position: managerPosition,
+					Position: []*Position{managerPosition},
 				}
 				builder.AddNode(dept)
 				builder.AddEdge(&Edge{
@@ -225,7 +225,7 @@ func BenchmarkFilterDifferentSizes(b *testing.B) {
 						Name:     fmt.Sprintf("Команда %d", i),
 						SysName:  fmt.Sprintf("team_%d", i),
 						Type:     teamType,
-						Position: managerPosition,
+						Position: []*Position{managerPosition},
 					}
 					builder.AddNode(team)
 					builder.AddEdge(&Edge{
@@ -240,7 +240,7 @@ func BenchmarkFilterDifferentSizes(b *testing.B) {
 							Name:     fmt.Sprintf("Сотрудник %d", j),
 							SysName:  fmt.Sprintf("employee_%d", j),
 							Type:     employeeType,
-							Position: developerPosition,
+							Position: []*Position{developerPosition},
 						}
 						builder.AddNode(employee)
 						builder.AddEdge(&Edge{
@@ -309,7 +309,7 @@ func BenchmarkFilterDifferentTypes(b *testing.B) {
 		Name:     "Главный офис",
 		SysName:  "main_office",
 		Type:     departmentType,
-		Position: managerPosition,
+		Position: []*Position{managerPosition},
 	}
 	builder.AddNode(root)
 
@@ -329,7 +329,7 @@ func BenchmarkFilterDifferentTypes(b *testing.B) {
 			Name:     fmt.Sprintf("Отдел %d", i),
 			SysName:  fmt.Sprintf("department_%d", i),
 			Type:     departmentType,
-			Position: managerPosition,
+			Position: []*Position{managerPosition},
 		}
 		builder.AddNode(dept)
 		builder.AddEdge(&Edge{
@@ -347,7 +347,7 @@ func BenchmarkFilterDifferentTypes(b *testing.B) {
 				Name:     fmt.Sprintf("Команда %d", i),
 				SysName:  fmt.Sprintf("team_%d", i),
 				Type:     teamType,
-				Position: managerPosition,
+				Position: []*Position{managerPosition},
 			}
 			builder.AddNode(team)
 			builder.AddEdge(&Edge{

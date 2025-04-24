@@ -55,28 +55,28 @@ func createTestTree() *Node {
 		ID:       uuid.New(),
 		Name:     "Engineering",
 		SysName:  "engineering",
-		Position: ceoPos,
+		Position: []*Position{ceoPos},
 		Type:     departmentType,
 	})
 	team1 := NewNode(&OrgNode{
 		ID:       uuid.New(),
 		Name:     "Backend Team",
 		SysName:  "backend_team",
-		Position: devPos,
+		Position: []*Position{devPos},
 		Type:     teamType,
 	})
 	team2 := NewNode(&OrgNode{
 		ID:       uuid.New(),
 		Name:     "Frontend Team",
 		SysName:  "frontend_team",
-		Position: devPos,
+		Position: []*Position{devPos},
 		Type:     teamType,
 	})
 	employee1 := NewNode(&OrgNode{
 		ID:       uuid.New(),
 		Name:     "John Doe",
 		SysName:  "john_doe",
-		Position: qaPos,
+		Position: []*Position{qaPos},
 		Type:     employeeType,
 	})
 
@@ -144,7 +144,12 @@ func TestFilterSubtree(t *testing.T) {
 	t.Run("Filter by Position", func(t *testing.T) {
 		predicate := func(value interface{}) bool {
 			if orgNode, ok := value.(*OrgNode); ok {
-				return orgNode.Position != nil && orgNode.Position.Name == "Developer"
+				for _, position := range orgNode.Position {
+					if position.Name == "Developer" {
+						return true
+					}
+				}
+				return false
 			}
 			return false
 		}
