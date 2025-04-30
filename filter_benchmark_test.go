@@ -359,7 +359,7 @@ func BenchmarkFilterDifferentTypes(b *testing.B) {
 			for j := 0; j < numEmployees; j++ {
 				employee := &EmployeeNode{
 					ID:   uuid.New(),
-					Name: fmt.Sprintf("Сотрудник %d", j),
+					User: fmt.Sprintf("Сотрудник %d", j),
 					Type: employeeType,
 				}
 				builder.AddNode(employee)

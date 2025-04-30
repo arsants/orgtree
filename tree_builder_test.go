@@ -657,7 +657,7 @@ func TestTreeBuilderFilterEmployees(t *testing.T) {
 	for i, emp := range employees {
 		employee := &EmployeeNode{
 			ID:   uuid.New(),
-			Name: emp.name,
+			User: emp.name,
 			Type: employeeType,
 		}
 		employeeNodes[i] = employee
